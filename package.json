@@ -1,5 +1,6 @@
 {
   "name": "lt-tais",
+  "private": true,
   "version": "1.0.0",
   "description": "A collection of scripts for TAIS handling",
   "main": "index.js",
