@@ -22,6 +22,7 @@
     "moment": "2.x",
     "q": "1.x",
     "request": "2.x",
+    "sprintf-js": "1.x",
     "yargs": "3.x"
   }
 }
