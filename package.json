@@ -19,8 +19,9 @@
   "homepage": "https://github.com/lexplano/lt-tais#readme",
   "dependencies": {
     "lodash": "3.x",
-    "nopt": "3.x",
+    "moment": "2.x",
     "q": "1.x",
-    "request": "2.x"
+    "request": "2.x",
+    "yargs": "3.x"
   }
 }
