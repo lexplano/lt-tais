@@ -9,7 +9,6 @@ var moment = require("moment"),
 	USER_AGENT = require("./userAgent");
 
 var ISO_DATE = "YYYY-MM-DD",
-	CRAWL_DELAY = 1,
 	PARALLEL_DOWNLOADS = 1,
 	RESULTS_PER_PAGE = 30;
 
@@ -19,9 +18,11 @@ var args = require("yargs")
 	.option("to", {type: "string", default: moment().endOf("month").format(ISO_DATE)})
 	.option("save-path", {type: "string", demand: true})
 	.option("max-downloads", {type: "number", default: undefined})
+	.option("crawl-delay", {type: "number", default: 20})
 	.argv;
 
-var MAX_DOWNLOADS = args["max-downloads"];
+var MAX_DOWNLOADS = args["max-downloads"],
+	CRAWL_DELAY = args["crawl-delay"];
 
 function getRange(from, to) {
 	var monthsToDownload = [];
