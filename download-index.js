@@ -6,7 +6,8 @@ var moment = require("moment"),
 	sprintf = require("sprintf-js").sprintf,
 	request = require("request"),
 	mkdirp = require("mkdirp"),
-	USER_AGENT = require("./userAgent");
+	USER_AGENT = require("./lib/userAgent"),
+	rangeToMonths = require("./lib/rangeToMonths");
 
 var ISO_DATE = "YYYY-MM-DD",
 	PARALLEL_DOWNLOADS = 1,
@@ -23,33 +24,6 @@ var args = require("yargs")
 
 var MAX_DOWNLOADS = args["max-downloads"],
 	CRAWL_DELAY = args["crawl-delay"];
-
-function getRange(from, to) {
-	var monthsToDownload = [];
-	if (!from || moment(from).isBefore("1990-03-31")) {
-		monthsToDownload.push({
-			from: undefined,
-			to: moment("1990-03-31")
-		});
-	} else {
-		monthsToDownload.push({
-			from: moment(from).startOf("month"),
-			to: moment(from).endOf("month")
-		});
-	}
-
-	var endOfLastMonth = moment(to).endOf("month");
-
-	var last;
-	while ((last = monthsToDownload[monthsToDownload.length - 1]) && !last.to.isAfter(endOfLastMonth)) {
-		monthsToDownload.push({
-			from: last.to.clone().add(1, "month").startOf("month"),
-			to: last.to.clone().add(1, "month").endOf("month")
-		})
-	}
-
-	return monthsToDownload;
-}
 
 function getNumAvailablePages(res, cb) {
 	setImmediate(function () {
@@ -158,13 +132,13 @@ function downloadNext() {
 	}, CRAWL_DELAY * 1000);
 }
 
-var queue = getRange(args.from, args.to).map(function (i) {
+var queue = rangeToMonths(args.from, args.to).map(function (i) {
 	var query = {};
 	if (i.from) {
-		query["p_nuo"] = i.from.format(ISO_DATE);
+		query["p_nuo"] = i.from;
 	}
 	if (i.to) {
-		query["p_iki"] = i.to.format(ISO_DATE);
+		query["p_iki"] = i.to;
 	}
 
 	query["p_no"] = 1;
