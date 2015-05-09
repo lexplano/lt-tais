@@ -92,7 +92,7 @@ function saveResults(query, res, cb) {
 }
 
 function retry(err, query) {
-	console.warn("Retrying", {query: query, error: err});
+	console.error("Retrying", {query: query, error: err});
 	queue.push(query); // retry
 	downloadNext();
 }
