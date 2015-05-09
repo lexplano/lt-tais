@@ -115,6 +115,7 @@ function onSaved(query, res) {
 				queue.push(newQuery);
 			}
 
+			console.log("Adding to queue", { query: query, numPages: numPages });
 			downloadNext();
 		});
 	};
@@ -150,7 +151,7 @@ function downloadNext() {
 		}
 		var query = queue.shift();
 		var url = "http://www3.lrs.lt/pls/inter3/dokpaieska.rezult_l?" + qs.stringify(query);
-		console.log("Downloading", {query: query, url: url});
+		console.log("Downloading", {query: query, url: url, queueLength: queue.length});
 
 		request(getRequestOptions(url), onReceived(query));
 
