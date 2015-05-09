@@ -1,19 +1,27 @@
 var moment = require("moment"),
 	qs = require("querystring"),
+	fs = require("fs"),
 	path = require("path"),
 	_ = require("lodash"),
-	sprintf = require("sprintf-js").sprintf;
+	sprintf = require("sprintf-js").sprintf,
+	request = require("request"),
+	mkdirp = require("mkdirp"),
+	USER_AGENT = require("./userAgent");
 
 var ISO_DATE = "YYYY-MM-DD",
 	CRAWL_DELAY = 1,
-	PARALLEL_DOWNLOADS = 1;
+	PARALLEL_DOWNLOADS = 1,
+	RESULTS_PER_PAGE = 30;
 
 var args = require("yargs")
 	.usage('Usage: $0 [options]')
 	.option("from", {type: "string", default: undefined})
 	.option("to", {type: "string", default: moment().endOf("month").format(ISO_DATE)})
 	.option("save-path", {type: "string", demand: true})
+	.option("max-downloads", {type: "number", default: undefined})
 	.argv;
+
+var MAX_DOWNLOADS = args["max-downloads"];
 
 function getRange(from, to) {
 	var monthsToDownload = [];
@@ -43,8 +51,20 @@ function getRange(from, to) {
 }
 
 function getNumAvailablePages(res, cb) {
-	// @todo: implement
-	cb(null, Math.round(Math.random() * 10) + 1);
+	setImmediate(function () {
+		try {
+			var matches = res.body.match(/viso - <b>(\d+)<\/b>/);
+			if (!matches) {
+				cb(new Error("Body does not match regex"));
+				return;
+			}
+
+			var numPages = Math.floor(parseInt(matches[1], 10) / RESULTS_PER_PAGE) + 1;
+			cb(null, numPages);
+		} catch (e) {
+			cb(e);
+		}
+	});
 }
 
 function getFn(query) {
@@ -55,24 +75,30 @@ function getFn(query) {
 	));
 }
 
-function saveResults(query, res) {
-	// @todo: mkdirp
+function saveResults(query, res, cb) {
 	var fn = getFn(query);
-	console.log("Saving", {query: query, fn: fn});
-	// @todo: write out
+	var dirname = path.dirname(fn);
+	console.log("mkdirp", {query:query, dirname: dirname});
+	mkdirp(dirname, function (err) {
+		if (err) return cb(err);
+
+		console.log("Saving", {query: query, fn: fn, bodyLength: res.body.length});
+		fs.writeFile(fn, res.body, function (err) {
+			console.log("Wrote", {fn: fn});
+			cb(err, !err);
+		});
+	});
 }
 
-function retry(query) {
-	console.warn("Retrying", {query: query});
+function retry(err, query) {
+	console.warn("Retrying", {query: query, error: err});
 	queue.push(query); // retry
 	downloadNext();
 }
 
-function onReceived(query) {
-	return function (err, res) {
-		if (err) return retry(query);
-
-		saveResults(query, res);
+function onSaved(query, res) {
+	return function (err) {
+		if (err) return retry(err, query);
 
 		if (query["p_no"] !== 1) {
 			downloadNext();
@@ -80,7 +106,7 @@ function onReceived(query) {
 		}
 
 		getNumAvailablePages(res, function (err, numPages) {
-			if (err) return retry(query);
+			if (err) return retry(err, query);
 
 			for (var i = 2; i <= numPages; i++) {
 				var newQuery = _.clone(query);
@@ -90,20 +116,41 @@ function onReceived(query) {
 
 			downloadNext();
 		});
+	};
+}
+
+function onReceived(query) {
+	return function (err, res) {
+		if (err) return retry(err, query);
+
+		saveResults(query, res, onSaved(query, res));
 	}
 }
 
+function getRequestOptions(url) {
+	return {
+		url: url,
+		headers: {
+			"user-agent": USER_AGENT
+		}
+	};
+}
+
+var downloadedCounter = 0;
 function downloadNext() {
 	setTimeout(function () {
 
 		if (!queue.length) return;
 
+		downloadedCounter++;
+		if (MAX_DOWNLOADS && downloadedCounter > MAX_DOWNLOADS) {
+			process.exit();
+		}
 		var query = queue.shift();
 		var url = "http://www3.lrs.lt/pls/inter3/dokpaieska.rezult_l?" + qs.stringify(query);
 		console.log("Downloading", {query: query, url: url});
 
-		// @todo: request
-		onReceived(query)(null, "10");
+		request(getRequestOptions(url), onReceived(query));
 
 	}, CRAWL_DELAY * 1000);
 }
