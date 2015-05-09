@@ -1,4 +1,5 @@
 var moment = require("moment"),
+	Q = require("q"),
 	qs = require("querystring"),
 	fs = require("fs"),
 	path = require("path"),
@@ -25,21 +26,13 @@ var args = require("yargs")
 var MAX_DOWNLOADS = args["max-downloads"],
 	CRAWL_DELAY = args["crawl-delay"];
 
-function getNumAvailablePages(res, cb) {
-	setImmediate(function () {
-		try {
-			var matches = res.body.toString().match(/viso - <b>(\d+)<\/b>/);
-			if (!matches) {
-				cb(new Error("Body does not match regex"));
-				return;
-			}
+function getNumAvailablePages(res) {
+	var matches = res.body.toString().match(/viso - <b>(\d+)<\/b>/);
+	if (!matches) {
+		throw new Error("Body does not match regex");
+	}
 
-			var numPages = Math.floor(parseInt(matches[1], 10) / RESULTS_PER_PAGE) + 1;
-			cb(null, numPages);
-		} catch (e) {
-			cb(e);
-		}
-	});
+	return Math.floor(parseInt(matches[1], 10) / RESULTS_PER_PAGE) + 1;
 }
 
 function getFn(query) {
@@ -50,62 +43,39 @@ function getFn(query) {
 	));
 }
 
-function saveResults(query, res, cb) {
+function saveResults(query, res) {
 	var fn = getFn(query);
 	var dirname = path.dirname(fn);
-	console.log("mkdirp", {query:query, dirname: dirname});
-	mkdirp(dirname, function (err) {
-		if (err) return cb(err);
 
-		console.log("Saving", {query: query, fn: fn, bodyLength: res.body.length});
-		fs.writeFile(fn, res.body, function (err) {
-			console.log("Wrote", {fn: fn});
-			cb(err, !err);
+	return Q.nfcall(mkdirp, dirname)
+		.then(function () {
+			return Q.ninvoke(fs, "writeFile", fn, res.body);
+		})
+		.then(function () {
+			return res;
 		});
-	});
 }
 
-function retry(err, query) {
-	console.error("Retrying", {query: query, error: err});
-	queue.push(query); // retry
-	downloadNext();
-}
+function queueNext(query, res) {
 
-function onSaved(query, res) {
-	return function (err) {
-		if (err) return retry(err, query);
-
-		if (query["p_no"] !== 1) {
-			downloadNext();
-			return;
-		}
-
-		getNumAvailablePages(res, function (err, numPages) {
-			if (err) return retry(err, query);
-
-			for (var i = 2; i <= numPages; i++) {
-				var newQuery = _.clone(query);
-				newQuery["p_no"] = i;
-				queue.push(newQuery);
-			}
-
-			console.log("Adding to queue", { query: query, numPages: numPages });
-			downloadNext();
-		});
-	};
-}
-
-function onReceived(query) {
-	return function (err, res) {
-		if (err) return retry(err, query);
-
-		saveResults(query, res, onSaved(query, res));
+	if (query["p_no"] !== 1) {
+		return;
 	}
+
+	return Q.fcall(getNumAvailablePages, res).then(function (numPages) {
+		for (var i = 2; i <= numPages; i++) {
+			var newQuery = _.clone(query);
+			newQuery["p_no"] = i;
+			queue.push(newQuery);
+		}
+		console.log("Queuing", {query: query, numPages: numPages});
+	});
+
 }
 
-function getRequestOptions(url) {
+function getRequestOptions(query) {
 	return {
-		url: url,
+		url: "http://www3.lrs.lt/pls/inter3/dokpaieska.rezult_l?" + qs.stringify(query),
 		encoding: null,
 		headers: {
 			"user-agent": USER_AGENT
@@ -115,28 +85,45 @@ function getRequestOptions(url) {
 
 var downloadedCounter = 0;
 function downloadNext() {
-	setTimeout(function () {
+	if (!queue.length) {
+		return;
+	}
 
-		if (!queue.length) return;
+	downloadedCounter++;
+	if (MAX_DOWNLOADS && downloadedCounter > MAX_DOWNLOADS) {
+		return;
+	}
 
-		downloadedCounter++;
-		if (MAX_DOWNLOADS && downloadedCounter > MAX_DOWNLOADS) {
-			process.exit();
-		}
-		var query = queue.shift();
-		var url = "http://www3.lrs.lt/pls/inter3/dokpaieska.rezult_l?" + qs.stringify(query);
-		console.log("Downloading", {query: query, url: url, queueLength: queue.length});
-
-		request(getRequestOptions(url), onReceived(query));
-
-	}, CRAWL_DELAY * 1000);
+	var query = queue.shift();
+	Q.delay(CRAWL_DELAY * 1000)
+		.then(function () {
+			console.log("Downloading", {query: query, queueLength: queue.length});
+			return Q.nfcall(request, getRequestOptions(query))
+		})
+		.spread(function (res) {
+			console.log("Saving", {query: query, bodyLength: res.body.length});
+			return saveResults(query, res);
+		})
+		.then(function (res) {
+			return queueNext(query, res);
+		})
+		.catch(function (err) {
+			console.error("Retrying", {query: query, error: err});
+			queue.push(query); // retry
+		})
+		.then(function () {
+			downloadNext();
+		})
+		.done();
 }
 
-var queue = rangeToMonths(args.from, args.to).map(function (i) {
+function dateRangeToQuery(i) {
 	var query = {};
+
 	if (i.from) {
 		query["p_nuo"] = i.from;
 	}
+
 	if (i.to) {
 		query["p_iki"] = i.to;
 	}
@@ -144,7 +131,9 @@ var queue = rangeToMonths(args.from, args.to).map(function (i) {
 	query["p_no"] = 1;
 
 	return query;
-});
+}
+
+var queue = rangeToMonths(args.from, args.to).map(dateRangeToQuery);
 
 for (var i = 0; i < PARALLEL_DOWNLOADS; i++) {
 	downloadNext();
