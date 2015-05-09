@@ -53,7 +53,7 @@ function getRange(from, to) {
 function getNumAvailablePages(res, cb) {
 	setImmediate(function () {
 		try {
-			var matches = res.body.match(/viso - <b>(\d+)<\/b>/);
+			var matches = res.body.toString().match(/viso - <b>(\d+)<\/b>/);
 			if (!matches) {
 				cb(new Error("Body does not match regex"));
 				return;
@@ -130,6 +130,7 @@ function onReceived(query) {
 function getRequestOptions(url) {
 	return {
 		url: url,
+		encoding: null,
 		headers: {
 			"user-agent": USER_AGENT
 		}
