@@ -6,7 +6,9 @@ var assert = require("assert"),
 	jsdom = require("jsdom"),
 	iconv = require("iconv-lite"),
 	Timerish = require("timerish"),
-	fs = require("fs");
+	fs = require("fs"),
+	url = require("url"),
+	qs = require("querystring");
 
 var CHARSET = "windows-1257";
 
@@ -47,9 +49,13 @@ function parseRow(row) {
 	//@todo: unicode...
 	//assert(docType.match(/^[\w\s]+$/), "Invalid document type: " + docType);
 
+	var docTaisId = qs.parse(url.parse(docTaisUrl).query)["p_id"];
+	assert(!!docTaisId, "p_id undefined: " + docTaisUrl);
+
 	return {
 		docDate: docDate,
 		docTitle: docTitle,
+		docTaisId: docTaisId,
 		docTaisUrl: docTaisUrl,
 		docType: docType,
 		docNo: docNo,
@@ -60,24 +66,29 @@ function parseRow(row) {
 function parseFile(fn) {
 	console.log("Reading", {fn: fn});
 	var tick = Timerish();
+	tick.start("read");
 	return Q.ninvoke(fs, "readFile", fn)
 		.then(function (data) {
-			tick("read");
 			var html = iconv.decode(data, CHARSET);
+			tick.stop("read");
 
-			tick("decode");
 			console.log("Constructing DOM", {fn: fn});
+			tick.start("dom");
 			return Q.ninvoke(jsdom, "env", html, [], {features: {FetchExternalResources: []}, encoding: "windows-1257"})
 		})
 		.then(function (window) {
+			tick.stop("dom");
+
+			tick.start("parse");
 			var tables = window.document.body.querySelectorAll("table.basicnoborder");
 			assert(tables.length === 1, "Incorrect number of table.basicnoborder in " + fn);
 
 			var rows = tables[0].querySelectorAll("tr:not(:first-child)");
 
 			var parsedDocs = _.map(rows, parseRow);
-			tick("parsed");
+			tick.stop("parse");
 
+			tick("complete");
 			console.log("Parsed", {fn: fn, times: tick.log});
 			return parsedDocs;
 		})
@@ -94,11 +105,12 @@ Q.nfcall(glob, "**/*.html", {cwd: args["index-path"]})
 		}));
 	})
 	.then(function (res) {
-		var parsed = _.flattenDeep(res);
-		console.log(parsed);
+		var parsed = _(res).flattenDeep().sortByAll("docDate", function (i) { return +i.docTaisId; }).reverse().value();
 
 		if (args["save-to"]) {
 			return Q.ninvoke(fs, "writeFile", args["save-to"], JSON.stringify(parsed, null, "  "));
 		}
+
+		console.log(parsed);
 	})
 	.done();
