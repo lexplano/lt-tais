@@ -19,6 +19,7 @@
   "homepage": "https://github.com/lexplano/lt-tais#readme",
   "dependencies": {
     "glob": "5.x",
+    "iconv-lite": "0.4.x",
     "jsdom": "5.x",
     "lodash": "3.x",
     "mkdirp": "0.5.x",
