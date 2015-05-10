@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/lexplano/lt-tais#readme",
   "dependencies": {
+    "concat-stream": "1.x",
     "glob": "5.x",
     "iconv-lite": "0.4.x",
     "jsdom": "5.x",
