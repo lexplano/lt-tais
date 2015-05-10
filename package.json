@@ -28,6 +28,7 @@
     "request": "2.x",
     "sprintf-js": "1.x",
     "timerish": "0.1.x",
+    "worker-farm": "1.x",
     "yargs": "3.x"
   },
   "devDependencies": {
