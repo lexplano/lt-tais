@@ -2,7 +2,9 @@ var glob = require("glob"),
 	path = require("path"),
 	_ = require("lodash"),
 	Q = require("q"),
-	fs = require("fs"),
+	qlimit = require("qlimit"),
+	fs = require("graceful-fs"),
+	readFile = qlimit(1000)(Q.nbind(fs.readFile, fs)),
 	iconv = require("iconv-lite"),
 	Timerish = require("timerish"),
 	workerFarm = require("worker-farm"),
@@ -18,7 +20,7 @@ var CHARSET = "windows-1257";
 
 function parseFile(fn) {
 	console.log("Reading", {fn: fn});
-	return Q.ninvoke(fs, "readFile", fn).then(function (data) {
+	return readFile(fn).then(function (data) {
 		var html = iconv.decode(data, CHARSET);
 		return Q.nfcall(parseIndexHtml, fn, html);
 	});
