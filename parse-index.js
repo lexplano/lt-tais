@@ -8,7 +8,9 @@ var glob = require("glob"),
 	iconv = require("iconv-lite"),
 	Timerish = require("timerish"),
 	workerFarm = require("worker-farm"),
-	parseIndexHtml = workerFarm(require.resolve("./lib/parseIndexHtml"));
+	parseIndexHtml = workerFarm(require.resolve("./lib/parseIndexHtml")),
+	es = require("event-stream"),
+	JSONStream = require("JSONStream");
 
 var args = require("yargs")
 	.usage('Usage: $0 [options]')
@@ -48,7 +50,13 @@ Q.nfcall(glob, "**/*.html", {cwd: args["index-path"]})
 
 		tick("sorted");
 		if (args["save-to"]) {
-			return Q.ninvoke(fs, "writeFile", args["save-to"], JSON.stringify(parsed, null, "  "));
+			var willEnd = Q.defer();
+			es.readArray(parsed)
+				.pipe(JSONStream.stringify())
+				.pipe(fs.createWriteStream(args["save-to"]))
+				.on("finish", willEnd.resolve)
+				.on("error", willEnd.reject);
+			return willEnd.promise;
 		}
 
 		console.log(parsed);
