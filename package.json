@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/lexplano/lt-tais#readme",
   "dependencies": {
+    "JSONStream": "1.x",
     "concat-stream": "1.x",
+    "event-stream": "3.x",
     "glob": "5.x",
     "graceful-fs": "3.x",
     "iconv-lite": "0.4.x",
