@@ -51,6 +51,22 @@ describe("parseIndexMetaLine", function () {
 			{k: "status", v: {status: "Negalioja", statusDate: "2014-08-20"}}
 		]);
 
+		testParser("Įsigaliojo 2014-05-31\n<!-- l_paskutine_red=471917 l_dok_key=471917 -->", [
+			[
+				{k: "status", v: {status: "Įsigaliojo", statusDate: "2014-05-31"}}
+			]
+		]);
+
+		testParser("Įsigaliojo 2014-05-31\n<!-- l_paskutine_red=471917 l_dok_key=123 -->", [
+			[
+				{k: "status", v: {status: "Įsigaliojo", statusDate: "2014-05-31"}}
+			],
+			[
+				{k: "tais_latest_id", v: "471917"},
+				{k: "tais_id", v: "123"}
+			]
+		]);
+
 	});
 
 	describe("publications", function () {
@@ -93,13 +109,13 @@ describe("parseIndexMetaLine", function () {
 
 		testParser("Valstybės žinios: 2013-04-20 Nr.41-2031; 2013-04-27 Nr.43 (<i>atitaisymas</i>)", [
 			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2013-04-20", pubNo: "41-2031"}},
-			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2013-04-27", pubNo: "43", correction: true }}
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2013-04-27", pubNo: "43", correction: true}}
 		]);
 
 		testParser("Valstybės žinios: 2003-06-11 Nr.56-2499; 2003-06-18 Nr.58-2603; 2003-06-18 Nr.58 (<i>atitaisymas</i>) (<small>Šio įsakymo paskelbimą Žin., 2003, Nr. 56-2499 laikyti negaliojančiu.</small>)", [
 			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2003-06-11", pubNo: "56-2499"}},
 			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2003-06-18", pubNo: "58-2603"}},
-			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2003-06-18", pubNo: "58", correction: true }},
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2003-06-18", pubNo: "58", correction: true}},
 			{k: "comment", v: "Šio įsakymo paskelbimą Žin., 2003, Nr. 56-2499 laikyti negaliojančiu."}
 		])
 
@@ -108,25 +124,25 @@ describe("parseIndexMetaLine", function () {
 	describe("latest notification", function () {
 
 		testParser('<span style="color:red; font-weight:bold">PAKEISTAS</span>', [
-			{ k: "notification", v: "PAKEISTAS" }
+			{k: "notification", v: "PAKEISTAS"}
 		]);
 
 		testParser('<span style="color:red; font-weight:bold">NEGALIOJA</span>', [
-			{ k: "notification", v: "NEGALIOJA" }
+			{k: "notification", v: "NEGALIOJA"}
 		]);
 
 		testParser('<span style="color:red; font-weight:bold">NEAKTUALI</span>', [
-			{ k: "notification", v: "NEAKTUALI" }
+			{k: "notification", v: "NEAKTUALI"}
 		]);
 
 		testParser('<span style="color:red; font-weight:bold">NEAKTUALI</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=494148"><small>[žr. šiuo metu galiojančią aktualiąją redakciją]</small></a></span>', [
-			{ k: "notification", v: "NEAKTUALI" },
-			{ k: "tais_latest_id", v: "494148" }
+			{k: "notification", v: "NEAKTUALI"},
+			{k: "tais_latest_id", v: "494148"}
 		]);
 
 		testParser('<span style="color:red; font-weight:bold">PAKEISTAS</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=470356"><small>[žr. aktualiąją redakciją]</small></a></span>', [
-			{ k: "notification", v: "PAKEISTAS" },
-			{ k: "tais_latest_id", v: "470356" }
+			{k: "notification", v: "PAKEISTAS"},
+			{k: "tais_latest_id", v: "470356"}
 		]);
 
 	});
@@ -134,11 +150,11 @@ describe("parseIndexMetaLine", function () {
 	describe("attachments", function () {
 
 		testParser('&nbsp;[Priedas: \nŽemėlapis&nbsp;<a class="normalus" href="http://www3.lrs.lt/pls/inter3/dokpaieska.dok_priedas?p_id=62659" title="Priedas originalas"><img border="0" alt="Priedas originalas" src="http://www3.lrs.lt/dokpaieska/ico_pdf.gif" class="s"></a>\n]', [
-			{ k: "attachment", v: { "file": "Žemėlapis.pdf", "attachmentId": "62659" }}
+			{k: "attachment", v: {"file": "Žemėlapis.pdf", "attachmentId": "62659"}}
 		]);
 
 		testParser('&nbsp;[Priedas: \nPriedas&nbsp;<a class="normalus" href="http://www3.lrs.lt/pls/inter3/dokpaieska.dok_priedas?p_id=26899" title="Priedas originalas"><img border="0" alt="Priedas originalas" src="http://www3.lrs.lt/dokpaieska/ico_pdf.gif" class="s"></a>\n]<!-- l_paskutine_red=318327 l_dok_key=318327 -->', [
-			{ k: "attachment", v: { "file": "Priedas.pdf", "attachmentId": "26899" }}
+			{k: "attachment", v: {"file": "Priedas.pdf", "attachmentId": "26899"}}
 		]);
 
 	})
