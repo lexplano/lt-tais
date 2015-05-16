@@ -11,33 +11,44 @@ describe("parseIndexMetaLine", function () {
 
 	describe("statuses", function () {
 		testParser("Įsigaliojo 2015-01-01", [
-			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}}
+			{k: "status", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}}
 		]);
 
 		testParser("Įsigaliojo 2015-01-01; Ratifikuota 2015-02-01", [
-			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}},
-			{k: "statusas", v: {status: "Ratifikuota", statusDate: "2015-02-01"}}
+			{k: "status", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}},
+			{k: "status", v: {status: "Ratifikuota", statusDate: "2015-02-01"}}
 		]);
 
 		testParser("Įsigaliojo 2015-01-01; Ratifikuota 2015-03-01; Nepasirašytas 2015-02-01", [
-			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}},
-			{k: "statusas", v: {status: "Ratifikuota", statusDate: "2015-03-01"}},
-			{k: "statusas", v: {status: "Nepasirašytas", statusDate: "2015-02-01"}}
+			{k: "status", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}},
+			{k: "status", v: {status: "Ratifikuota", statusDate: "2015-03-01"}},
+			{k: "status", v: {status: "Nepasirašytas", statusDate: "2015-02-01"}}
 		]);
 
 		testParser("Prisijungta 1993-05-03; Pasirašyta 1993-05-14; Ratifikuota 1995-04-27; Ratifikaciniai raštai deponuoti 1995-06-20; Įsigaliojo 1995-06-20; Nauja redakcija 1998-11-04", [
-			{k: "statusas", v: {status: "Prisijungta", statusDate: "1993-05-03"}},
-			{k: "statusas", v: {status: "Pasirašyta", statusDate: "1993-05-14"}},
-			{k: "statusas", v: {status: "Ratifikuota", statusDate: "1995-04-27"}},
-			{k: "statusas", v: {status: "Ratifikaciniai raštai deponuoti", statusDate: "1995-06-20"}},
-			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "1995-06-20"}},
-			{k: "statusas", v: {status: "Nauja redakcija", statusDate: "1998-11-04"}}
+			{k: "status", v: {status: "Prisijungta", statusDate: "1993-05-03"}},
+			{k: "status", v: {status: "Pasirašyta", statusDate: "1993-05-14"}},
+			{k: "status", v: {status: "Ratifikuota", statusDate: "1995-04-27"}},
+			{k: "status", v: {status: "Ratifikaciniai raštai deponuoti", statusDate: "1995-06-20"}},
+			{k: "status", v: {status: "Įsigaliojo", statusDate: "1995-06-20"}},
+			{k: "status", v: {status: "Nauja redakcija", statusDate: "1998-11-04"}}
 		]);
 
 		testParser("Taikoma; Ratifikuota 2001-08-02; Įsigaliojo 2002-03-24", [
-			{k: "statusas", v: {status: "Taikoma", statusDate: undefined}},
-			{k: "statusas", v: {status: "Ratifikuota", statusDate: "2001-08-02"}},
-			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "2002-03-24"}}
+			{k: "status", v: {status: "Taikoma", statusDate: undefined}},
+			{k: "status", v: {status: "Ratifikuota", statusDate: "2001-08-02"}},
+			{k: "status", v: {status: "Įsigaliojo", statusDate: "2002-03-24"}}
+		]);
+
+		testParser("Įsigaliojo nuo 2013-09-21 iki 2014-06-01; Negalioja 2014-06-02", [
+			{k: "status", v: {status: "Įsigaliojo", statusDateFrom: "2013-09-21", statusDateTo: "2014-06-01"}},
+			{k: "status", v: {status: "Negalioja", statusDate: "2014-06-02"}}
+		]);
+
+		testParser("Įsigaliojo iki 2014-08-19; Ratifikuota 2006-04-25; Negalioja 2014-08-20", [
+			{k: "status", v: {status: "Įsigaliojo", statusDateTo: "2014-08-19"}},
+			{k: "status", v: {status: "Ratifikuota", statusDate: "2006-04-25"}},
+			{k: "status", v: {status: "Negalioja", statusDate: "2014-08-20"}}
 		]);
 
 	});
