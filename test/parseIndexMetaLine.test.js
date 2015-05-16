@@ -9,6 +9,23 @@ describe("parseIndexMetaLine", function () {
 		})
 	}
 
+	describe("actions", function () {
+
+		testParser("Parengė: Lietuvos Respublikos Prezidentas", [
+			{k: "action", v: {"action": "Parengė", "person": "Lietuvos Respublikos Prezidentas"}}
+		]);
+
+		testParser("Parengė: Lietuvos Respublikos Seimas; Pateikė: Seimo narys V.Simulik, Seimo narys E.Šablinskas", [
+			{k: "action", v: {"action": "Parengė", "person": "Lietuvos Respublikos Seimas"}},
+			{k: "action", v: {"action": "Pateikė", "person": "Seimo narys V.Simulik, Seimo narys E.Šablinskas"}}
+		]);
+
+		testParser('Pateikė: Seimo narys R.Bloškys, Seimo narė G.Jurkūnaitė, Seimo narė I.Šiaulienė,&nbsp;<a class="normalus" title="Daugiau..." href="dokpaieska.showdoc_l?p_id=25899&amp;p_daug=2">&gt;&gt;</a>', [
+			{k: "action", v: {"action": "Pateikė", "person": "Seimo narys R.Bloškys, Seimo narė G.Jurkūnaitė, Seimo narė I.Šiaulienė,", etAl: true, taisId: "25899"}}
+		]);
+
+	});
+
 	describe("statuses", function () {
 		testParser("Įsigaliojo 2015-01-01", [
 			{k: "status", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}}
