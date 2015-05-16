@@ -69,6 +69,29 @@ describe("parseIndexMetaLine", function () {
 			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "1999-01-26", pubNo: "106(5)"}}
 		]);
 
+		testParser("Valstybės žinios: 2009-12-24 Nr.152-6862; Informaciniai pranešimai: 2009-12-30 Nr.102-1258", [
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2009-12-24", pubNo: "152-6862"}},
+			{k: "skelbta", v: {publication: "Informaciniai pranešimai", pubDate: "2009-12-30", pubNo: "102-1258"}}
+		]);
+
+		testParser("Valstybės žinios: 2013-10-12 Nr.107-5313; 2013-12-30 Nr.138-6968; Teisės aktų registras: 2013-12-31 Nr.2013-00094", [
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2013-10-12", pubNo: "107-5313"}},
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2013-12-30", pubNo: "138-6968"}},
+			{k: "skelbta", v: {publication: "Teisės aktų registras", pubDate: "2013-12-31", pubNo: "2013-00094"}}
+		]);
+
+		testParser("Valstybės žinios: 2013-04-20 Nr.41-2031; 2013-04-27 Nr.43 (<i>atitaisymas</i>)", [
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2013-04-20", pubNo: "41-2031"}},
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2013-04-27", pubNo: "43", correction: true }}
+		]);
+
+		testParser("Valstybės žinios: 2003-06-11 Nr.56-2499; 2003-06-18 Nr.58-2603; 2003-06-18 Nr.58 (<i>atitaisymas</i>) (<small>Šio įsakymo paskelbimą Žin., 2003, Nr. 56-2499 laikyti negaliojančiu.</small>)", [
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2003-06-11", pubNo: "56-2499"}},
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2003-06-18", pubNo: "58-2603"}},
+			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "2003-06-18", pubNo: "58", correction: true }},
+			{k: "comment", v: "Šio įsakymo paskelbimą Žin., 2003, Nr. 56-2499 laikyti negaliojančiu."}
+		])
+
 	});
 
 	describe("latest notification", function () {
