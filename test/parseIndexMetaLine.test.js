@@ -62,8 +62,8 @@ describe("parseIndexMetaLine", function () {
 				{k: "status", v: {status: "Įsigaliojo", statusDate: "2014-05-31"}}
 			],
 			[
-				{k: "tais_latest_id", v: "471917"},
-				{k: "tais_id", v: "123"}
+				{k: "taisLatestId", v: "471917"},
+				{k: "taisId", v: "123"}
 			]
 		]);
 
@@ -137,12 +137,12 @@ describe("parseIndexMetaLine", function () {
 
 		testParser('<span style="color:red; font-weight:bold">NEAKTUALI</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=494148"><small>[žr. šiuo metu galiojančią aktualiąją redakciją]</small></a></span>', [
 			{k: "notification", v: "NEAKTUALI"},
-			{k: "tais_latest_id", v: "494148"}
+			{k: "taisLatestId", v: "494148"}
 		]);
 
 		testParser('<span style="color:red; font-weight:bold">PAKEISTAS</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=470356"><small>[žr. aktualiąją redakciją]</small></a></span>', [
 			{k: "notification", v: "PAKEISTAS"},
-			{k: "tais_latest_id", v: "470356"}
+			{k: "taisLatestId", v: "470356"}
 		]);
 
 	});
@@ -157,6 +157,10 @@ describe("parseIndexMetaLine", function () {
 			[
 				{k: "attachment", v: {"file": "Priedas.pdf", "attachmentId": "26899"}}
 			]
+		]);
+
+		testParser('<span>&nbsp;<a href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=277942&amp;p_query=&amp;p_tr2=2#prd" title="Dokumento antraštėje nurodyti priedai">[Priedai]</a></span>', [
+			{k: "attachment", v: {"taisId": "277942"}}
 		]);
 
 	})
