@@ -51,6 +51,10 @@ describe("parseIndexMetaLine", function () {
 			{k: "skelbta", v: {publication: "Teisės aktų registras", pubDate: "2001-05-05", pubNo: "1234-55"}}
 		]);
 
+		testParser("Teisės aktų informacinė sistema: 2014-01-29 Nr.", [
+			{k: "skelbta", v: {publication: "Teisės aktų informacinė sistema", pubDate: "2014-01-29", pubNo: undefined}}
+		]);
+
 		testParser("Teisės aktų registras: 2001-05-05 Nr.1234-55; 2001-06-06 Nr.777-88", [
 			{k: "skelbta", v: {publication: "Teisės aktų registras", pubDate: "2001-05-05", pubNo: "1234-55"}},
 			{k: "skelbta", v: {publication: "Teisės aktų registras", pubDate: "2001-06-06", pubNo: "777-88"}}
@@ -62,6 +66,20 @@ describe("parseIndexMetaLine", function () {
 			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "1998-12-23", pubNo: "106(3)"}},
 			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "1999-01-21", pubNo: "106(4)"}},
 			{k: "skelbta", v: {publication: "Valstybės žinios", pubDate: "1999-01-26", pubNo: "106(5)"}}
+		]);
+
+	});
+
+	describe("neaktuali", function () {
+
+		testParser('<span style="color:red; font-weight:bold">NEAKTUALI</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=494148"><small>[žr. šiuo metu galiojančią aktualiąją redakciją]</small></a></span>', [
+			{ k: "neaktuali", v: "NEAKTUALI" },
+			{ k: "tais_aktuali_id", v: "494148" }
+		]);
+
+		testParser('<span style="color:red; font-weight:bold">PAKEISTAS</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=470356"><small>[žr. aktualiąją redakciją]</small></a></span>', [
+			{ k: "neaktuali", v: "PAKEISTAS" },
+			{ k: "tais_aktuali_id", v: "470356" }
 		]);
 
 	});
