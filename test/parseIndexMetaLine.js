@@ -73,6 +73,18 @@ describe("parseIndexMetaLine", function () {
 
 	describe("latest notification", function () {
 
+		testParser('<span style="color:red; font-weight:bold">PAKEISTAS</span>', [
+			{ k: "notification", v: "PAKEISTAS" }
+		]);
+
+		testParser('<span style="color:red; font-weight:bold">NEGALIOJA</span>', [
+			{ k: "notification", v: "NEGALIOJA" }
+		]);
+
+		testParser('<span style="color:red; font-weight:bold">NEAKTUALI</span>', [
+			{ k: "notification", v: "NEAKTUALI" }
+		]);
+
 		testParser('<span style="color:red; font-weight:bold">NEAKTUALI</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=494148"><small>[žr. šiuo metu galiojančią aktualiąją redakciją]</small></a></span>', [
 			{ k: "notification", v: "NEAKTUALI" },
 			{ k: "tais_latest_id", v: "494148" }
