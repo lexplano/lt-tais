@@ -154,7 +154,9 @@ describe("parseIndexMetaLine", function () {
 		]);
 
 		testParser('&nbsp;[Priedas: \nPriedas&nbsp;<a class="normalus" href="http://www3.lrs.lt/pls/inter3/dokpaieska.dok_priedas?p_id=26899" title="Priedas originalas"><img border="0" alt="Priedas originalas" src="http://www3.lrs.lt/dokpaieska/ico_pdf.gif" class="s"></a>\n]<!-- l_paskutine_red=318327 l_dok_key=318327 -->', [
-			{k: "attachment", v: {"file": "Priedas.pdf", "attachmentId": "26899"}}
+			[
+				{k: "attachment", v: {"file": "Priedas.pdf", "attachmentId": "26899"}}
+			]
 		]);
 
 	})
