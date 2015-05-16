@@ -11,7 +11,7 @@ describe("parseIndexMetaLine", function () {
 
 	describe("statuses", function () {
 		testParser("Įsigaliojo 2015-01-01", [
-			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}},
+			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "2015-01-01"}}
 		]);
 
 		testParser("Įsigaliojo 2015-01-01; Ratifikuota 2015-02-01", [
@@ -39,6 +39,7 @@ describe("parseIndexMetaLine", function () {
 			{k: "statusas", v: {status: "Ratifikuota", statusDate: "2001-08-02"}},
 			{k: "statusas", v: {status: "Įsigaliojo", statusDate: "2002-03-24"}}
 		]);
+
 	});
 
 	describe("publications", function () {
@@ -70,16 +71,16 @@ describe("parseIndexMetaLine", function () {
 
 	});
 
-	describe("neaktuali", function () {
+	describe("latest notification", function () {
 
 		testParser('<span style="color:red; font-weight:bold">NEAKTUALI</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=494148"><small>[žr. šiuo metu galiojančią aktualiąją redakciją]</small></a></span>', [
-			{ k: "neaktuali", v: "NEAKTUALI" },
-			{ k: "tais_aktuali_id", v: "494148" }
+			{ k: "notification", v: "NEAKTUALI" },
+			{ k: "tais_latest_id", v: "494148" }
 		]);
 
 		testParser('<span style="color:red; font-weight:bold">PAKEISTAS</span>&nbsp;<span><a title="Dokumento paskutinė aktuali redakcija" href="http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=470356"><small>[žr. aktualiąją redakciją]</small></a></span>', [
-			{ k: "neaktuali", v: "PAKEISTAS" },
-			{ k: "tais_aktuali_id", v: "470356" }
+			{ k: "notification", v: "PAKEISTAS" },
+			{ k: "tais_latest_id", v: "470356" }
 		]);
 
 	});
