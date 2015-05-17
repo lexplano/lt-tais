@@ -20,7 +20,7 @@ var args = require("yargs")
 function parseFile(fn) {
 	console.log("Reading", {fn: fn});
 	return readFile(fn).then(function (html) {
-		return Q.nfcall(parseIndexHtml, fn, html);
+		return Q.nfcall(parseIndexHtml, fn, html.toString());
 	});
 }
 
