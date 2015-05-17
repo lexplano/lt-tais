@@ -17,11 +17,11 @@ var ISO_DATE = "YYYY-MM-DD",
 
 var args = require("yargs")
 	.usage('Usage: $0 [options]')
-	.option("from", {type: "string", default: undefined})
-	.option("to", {type: "string", default: moment().endOf("month").format(ISO_DATE)})
-	.option("save-path", {type: "string", demand: true})
-	.option("max-downloads", {type: "number", default: undefined})
-	.option("crawl-delay", {type: "number", default: 20})
+	.option("from", {"type": "string", "default": undefined})
+	.option("to", {"type": "string", "default": moment().endOf("month").format(ISO_DATE)})
+	.option("save-path", {"type": "string", "demand": true})
+	.option("max-downloads", {"type": "number", "default": undefined})
+	.option("crawl-delay", {"type": "number", "default": 20})
 	.argv;
 
 var MAX_DOWNLOADS = args["max-downloads"],
@@ -99,7 +99,7 @@ function downloadNext() {
 	Q.delay(CRAWL_DELAY * 1000)
 		.then(function () {
 			console.log("Downloading", {query: query, queueLength: queue.length});
-			return Q.nfcall(request, getRequestOptions(query))
+			return Q.nfcall(request, getRequestOptions(query));
 		})
 		.spread(function (res) {
 			console.log("Saving", {query: query, bodyLength: res.body.length});
