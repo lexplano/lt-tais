@@ -1,0 +1,13 @@
+{
+	"globals": {
+		"Promise": true
+	},
+	"esnext": true,
+	"browser": true,
+	"sub": true,
+	"freeze": true,
+	"immed": true,
+	"nonbsp": true,
+	"noempty": true,
+	"unused": true
+}

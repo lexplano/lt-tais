@@ -5,7 +5,6 @@ var glob = require("glob"),
 	qlimit = require("qlimit"),
 	fs = require("graceful-fs"),
 	readFile = qlimit(1000)(Q.nbind(fs.readFile, fs)),
-	iconv = require("iconv-lite"),
 	Timerish = require("timerish"),
 	workerFarm = require("worker-farm"),
 	parseIndexHtml = workerFarm(require.resolve("./lib/parseIndex/parseIndexHtml")),
@@ -18,12 +17,9 @@ var args = require("yargs")
 	.option("save-to", {type: "string"})
 	.argv;
 
-var CHARSET = "windows-1257";
-
 function parseFile(fn) {
 	console.log("Reading", {fn: fn});
-	return readFile(fn).then(function (data) {
-		var html = iconv.decode(data, CHARSET);
+	return readFile(fn).then(function (html) {
 		return Q.nfcall(parseIndexHtml, fn, html);
 	});
 }

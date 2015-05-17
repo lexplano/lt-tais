@@ -49,7 +49,7 @@ function saveResults(query, res) {
 
 	return Q.nfcall(mkdirp, dirname)
 		.then(function () {
-			return Q.ninvoke(fs, "writeFile", fn, res.body);
+			return Q.ninvoke(fs, "writeFile", fn, cleanupHtml(res.body));
 		})
 		.then(function () {
 			return res;
