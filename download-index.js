@@ -8,7 +8,8 @@ var moment = require("moment"),
 	request = require("request"),
 	mkdirp = require("mkdirp"),
 	USER_AGENT = require("./lib/userAgent"),
-	rangeToMonths = require("./lib/downloadIndex/rangeToMonths");
+	rangeToMonths = require("./lib/downloadIndex/rangeToMonths"),
+	cleanupHtml = require("./lib/downloadIndex/cleanupHtml");
 
 var ISO_DATE = "YYYY-MM-DD",
 	PARALLEL_DOWNLOADS = 1,
