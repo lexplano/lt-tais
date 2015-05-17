@@ -8,7 +8,7 @@ var glob = require("glob"),
 	iconv = require("iconv-lite"),
 	Timerish = require("timerish"),
 	workerFarm = require("worker-farm"),
-	parseIndexHtml = workerFarm(require.resolve("./lib/parseIndexHtml")),
+	parseIndexHtml = workerFarm(require.resolve("./lib/parseIndex/parseIndexHtml")),
 	es = require("event-stream"),
 	JSONStream = require("JSONStream");
 
