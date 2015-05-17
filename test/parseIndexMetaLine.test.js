@@ -1,5 +1,5 @@
 var expect = require("chai").expect,
-	parseIndexMetaLine = require("../lib/parseIndexMetaLine");
+	parseIndexMetaLine = require("../lib/parseIndex/parseIndexMetaLine");
 
 describe("parseIndexMetaLine", function () {
 

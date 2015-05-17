@@ -1,5 +1,5 @@
 var expect = require("chai").expect,
-	rangeToMonths = require("../lib/rangeToMonths");
+	rangeToMonths = require("../lib/downloadIndex/rangeToMonths");
 
 function testRange(from, to, expected) {
 	it(from + " to " + to, function () {
