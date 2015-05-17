@@ -1,7 +1,7 @@
 {
   "name": "@lexplano/lt-tais",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A collection of scripts for TAIS handling",
   "main": "index.js",
   "scripts": {
