@@ -48,7 +48,7 @@ Q.nfcall(glob, "**/*.html", {cwd: args["index-path"]})
 		if (args["save-to"]) {
 			var willEnd = Q.defer();
 			es.readArray(parsed)
-				.pipe(JSONStream.stringify())
+				.pipe(JSONStream.stringify('[\n', '\n,\n', '\n]\n', 2))
 				.pipe(fs.createWriteStream(args["save-to"]))
 				.on("finish", willEnd.resolve)
 				.on("error", willEnd.reject);
