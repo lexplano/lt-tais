@@ -3,6 +3,10 @@
   "version": "0.4.2",
   "description": "A collection of scripts for http://www3.lrs.lt/dokpaieska/forma_l.htm (TAIS) handling",
   "main": "index.js",
+  "bin": {
+    "tais-download-index": "./download-index.js",
+    "tais-parse-index": "./parse-index.js"
+  },
   "scripts": {
     "test": "mocha"
   },
@@ -10,7 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/lexplano/tais-client.git"
   },
-  "author": "MB H6.LT",
+  "author": "MB H6.LT <info@lexplano.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/lexplano/tais-client/issues"
