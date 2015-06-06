@@ -1,22 +1,22 @@
 {
-  "name": "@lexplano/lt-tais",
+  "name": "@lexplano/tais-client",
   "private": true,
   "version": "0.4.2",
-  "description": "A collection of scripts for TAIS handling",
+  "description": "A collection of scripts for http://www3.lrs.lt/dokpaieska/forma_l.htm (TAIS) handling",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lexplano/lt-tais.git"
+    "url": "git+https://github.com/lexplano/tais-client.git"
   },
   "author": "MB H6.LT",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lexplano/lt-tais/issues"
+    "url": "https://github.com/lexplano/tais-client/issues"
   },
-  "homepage": "https://github.com/lexplano/lt-tais#readme",
+  "homepage": "https://github.com/lexplano/tais-client#readme",
   "dependencies": {
     "JSONStream": "1.x",
     "concat-stream": "1.x",
