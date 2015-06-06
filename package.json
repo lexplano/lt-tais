@@ -1,6 +1,5 @@
 {
   "name": "@lexplano/tais-client",
-  "private": true,
   "version": "0.4.2",
   "description": "A collection of scripts for http://www3.lrs.lt/dokpaieska/forma_l.htm (TAIS) handling",
   "main": "index.js",
